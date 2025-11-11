@@ -1,0 +1,13 @@
+{
+  "name": "my-mongo-project",
+  "version": "1.0.0",
+  "description": "A project using MongoDB and Mongoose",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": { 
+    "mongoose": "^8.19.3"
+  }
+}
