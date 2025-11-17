@@ -1,0 +1,11 @@
+# uploads/avatars/.htaccess — deshabilita ejecución de scripts
+Options -Indexes -ExecCGI
+php_flag engine off
+
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phps
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phps
+
+# Servir como binario/imagen, nunca como script
+<FilesMatch "\.(php|phtml|php\d?|phps|pl|py|cgi)$">
+  Deny from all
+</FilesMatch>
