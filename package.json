@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "dependencies": { 
-    "mongoose": "^8.19.3"
+  "dependencies": {
+    "mongoose": "^8.19.4"
   }
 }
