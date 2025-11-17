@@ -19,7 +19,7 @@ $allowed = [
   'ventas' => ['insertar', 'lectura'], // <<--- habilitamos tus páginas
     'vendedores'  => ['lista','agregar','reportes'], // ← nuevo
     'proyectos'  => ['lista','agregar','reportes'], // ← nuevo
-    
+  'perfil'     => ['perfil','perfil_editar'],
 ];
 
 

@@ -14,19 +14,6 @@
   </div>
 </section>
 
-<!-- Mi Perfil -->
-<section id="mi-perfil" class="section site-scope">
-  <h2>Mi Perfil</h2>
-  <hr />
-  <div class="profile u-card">
-    <img src="https://i.pravatar.cc/140?img=12" alt="Foto de perfil" class="avatar">
-    <div>
-      <h3><?= e($_SESSION['username'] ?? 'usuario') ?></h3>
-      <p>Estudiante de Ing. de Sistemas</p>
-    </div>
-  </div>
-</section>
-
 <!-- Contáctame (con EmailJS tal cual tenías) -->
 <section id="contactame" class="section site-scope">
   <h2>Contáctame</h2>

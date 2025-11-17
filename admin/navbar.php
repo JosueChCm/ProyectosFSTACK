@@ -1,7 +1,7 @@
 <?php if (!defined('APP_INIT')) { http_response_code(403); exit; } ?>
 <?php
 // Avatar por defecto (ajusta la ruta según tu estructura pública)
-$DEFAULT_AVATAR = '/uploads/avatars/default.png';
+$DEFAULT_AVATAR = '../uploads/avatars/default.webp';
 
 // 1) Toma el avatar de la sesión si existe, si no NULL
 $currentAvatar = $_SESSION['avatar_url'] ?? null;
@@ -67,7 +67,7 @@ if (!function_exists('e')) {
           </div>
         </div>
         <div class="userbox-actions">
-          <a class="userbox-btn" href="#mi-perfil">
+          <a class="userbox-btn" href="./?m=perfil&action=perfil">
             <i class="fa-solid fa-user-pen"></i>
             Ver perfil
           </a>

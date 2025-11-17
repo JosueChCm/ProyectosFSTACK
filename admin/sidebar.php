@@ -5,10 +5,11 @@
   </div>
 
   <nav class="menu">
-    <a class="menu-item active" href="#Presentacion" data-section="Presentacion">
+    <a class="menu-item <?= ($module==='home' && $action==='index') ? 'active' : '' ?>" href="./?m=home&action=index">
       <i class="fa-solid fa-house"></i><span>Presentación</span>
     </a>
-    <a class="menu-item" href="#mi-perfil" data-section="mi-perfil">
+    
+    <a class="menu-item <?= ($module==='perfil' && $action==='perfil') ? 'active' : '' ?>" href="./?m=perfil&action=perfil">
       <i class="fa-solid fa-user"></i><span>Mi Perfil</span>
     </a>
 
@@ -21,7 +22,7 @@
   aria-controls="vendorsMenu"
 >
   <i class="fa-solid fa-users"></i>
-  <span>Vendedores</span>
+  <span>Vendedores</span> 
   <i class="fa-solid fa-chevron-down chevron"></i>
 </button>
 <div
