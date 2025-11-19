@@ -13,18 +13,18 @@ export default function Contact() {
         <div className="contact-info">
           <p>
             ✉️ Correo:{" "}
-            <a href="mailto:tu-correo@example.com">
-              tu-correo@example.com
+            <a href="mailto:241111041@undc.edu.pe">
+              241111041@undc.edu.pe
             </a>
           </p>
           <p>
             💻 GitHub:{" "}
             <a
-              href="https://github.com/tu-usuario"
+              href="https://github.com/JosueChCm"
               target="_blank"
               rel="noreferrer"
             >
-              github.com/tu-usuario
+              github.com/JosueChCm
             </a>
           </p>
           <p>

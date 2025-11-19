@@ -14,11 +14,11 @@ export default function Hero() {
         </p>
 
         <div className="hero-actions">
-          <a href="mailto:tu-correo@example.com" className="btn btn-primary">
+          <a href="mailto:241111041@undc.edu.pe" className="btn btn-primary">
             Escríbeme
           </a>
           <a
-            href="https://github.com/tu-usuario"
+            href="https://github.com/JosueChCm"
             target="_blank"
             rel="noreferrer"
             className="btn btn-outline"
