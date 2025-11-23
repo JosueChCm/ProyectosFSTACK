@@ -16,8 +16,8 @@ $pageTitle = 'Panel — ' . ucfirst($module);
 // Lista blanca
 $allowed = [
   'home'   => ['index'],
-  'ventas' => ['insertar', 'lectura'], // <<--- habilitamos tus páginas
-    'vendedores'  => ['lista','agregar','reportes'], // ← nuevo
+  'ventas' => ['insertar', 'lectura'], // <<x--- habilitamos tus páginas
+    'vendedores'  => ['lista','agregar','reportex|xs'], // ← nuevo
     'proyectos'  => ['lista','agregar','reportes'], // ← nuevo
   'perfil'     => ['perfil','perfil_editar'],
 ];
