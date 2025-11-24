@@ -202,13 +202,83 @@ hr {
 }
 .menu { display: flex; flex-direction: column; gap: 6px; }
 
-/* Items */
+/* =============================================================
+   5.1) ITEMS SIDEBAR — FONDO + LÍNEA IZQUIERDA ANIMADA
+   ============================================================= */
 .menu-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 14px; border-radius: 12px; color: var(--sidebar-fg);
-  text-decoration: none; font-weight: 600; position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+
+  color: var(--sidebar-fg);
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+
+  background: transparent;
 }
-.menu-item i { width: 20px; text-align: center; color: var(--sidebar-fg-muted); }
+
+/* pseudo para fondo animado (de izquierda a derecha) */
+.menu-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--sidebar-fg-muted) 18%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s ease;
+  z-index: -1;
+}
+
+/* pseudo para línea izquierda animada (del centro hacia arriba/abajo) */
+.menu-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 60%;
+  background: var(--underline);
+  transform: scaleY(0) translateY(-50%);
+  transform-origin: center;
+  transition: transform .35s ease;
+}
+
+/* icono dentro del item */
+.menu-item i {
+  width: 20px;
+  text-align: center;
+  color: var(--sidebar-fg-muted);
+}
+
+/* Estados hover / focus / active: activan las animaciones */
+.menu-item:hover,
+.menu-item:focus-visible,
+.menu-item.active {
+  color: var(--sidebar-fg);
+}
+
+.menu-item:hover::before,
+.menu-item:focus-visible::before,
+.menu-item.active::before {
+  transform: scaleX(1);
+}
+
+.menu-item:hover::after,
+.menu-item:focus-visible::after,
+.menu-item.active::after {
+  transform: scaleY(1) translateY(-50%);
+}
+
+.menu-item:hover i,
+.menu-item:focus-visible i,
+.menu-item.active i {
+  color: var(--sidebar-fg);
+}
 
 /* Toggle de submenú */
 .menu-toggle {
@@ -232,21 +302,11 @@ hr {
   padding: 10px 14px 12px 32px; font-weight: 600; opacity: .95;
 }
 
-/* Efecto subrayado */
-.menu-item::after {
-  content: ""; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 2px; border-radius: 2px;
-  background: var(--underline); transform: scaleX(0); transform-origin: left; transition: transform .18s ease;
-}
-.menu-item:hover::after, .menu-item:focus-visible::after, .menu-item.active::after { transform: scaleX(1); }
-
+/* (Opcional: animación neon aún disponible por si la usas en otro lado) */
 @keyframes neonPulse {
   0% { box-shadow: 0 0 3px var(--neon), 0 0 8px var(--neon-2); }
   100%{ box-shadow: 0 0 5px var(--neon), 0 0 12px var(--neon-2); }
 }
-:root[data-theme="dark"] .menu-item::after { background: var(--neon); box-shadow: 0 0 3px var(--neon), 0 0 8px var(--neon-2); }
-:root[data-theme="dark"] .menu-item:hover::after,
-:root[data-theme="dark"] .menu-item:focus-visible::after,
-:root[data-theme="dark"] .menu-item.active::after { animation: neonPulse 1.1s ease-in-out infinite alternate; }
 
 /* =============================================================
    6) CONTENIDO GENERAL (secciones)
