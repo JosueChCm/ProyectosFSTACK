@@ -30,12 +30,12 @@ try {
     $client->setAccessToken($token);
 
     // Perfil del usuario
-    $oauth2     = new Google\Service\Oauth2($client);
-    $gUser      = $oauth2->userinfo->get();
-    $googleId   = $gUser->id;
-    $email      = $gUser->email;
-    $name       = $gUser->name ?: '';
-    $picture    = $gUser->picture ?: null;    // ✅ AÑADIR ESTA LÍNEA
+    $oauth2   = new Google\Service\Oauth2($client);
+    $gUser    = $oauth2->userinfo->get();
+    $googleId = $gUser->id;
+    $email    = $gUser->email;
+    $name     = $gUser->name ?: '';
+    $picture  = $gUser->picture ?: null;    // foto que da Google (puede ser null)
 
     if (!$googleId || !$email) {
         throw new RuntimeException('No se pudo obtener google_id o email.');
@@ -43,72 +43,93 @@ try {
 
     $pdo->beginTransaction();
 
+    // ======================================================
     // 1) Buscar por google_id
-    $q = $pdo->prepare('SELECT id, username FROM users WHERE google_id = ? LIMIT 1');
+    // ======================================================
+    $q = $pdo->prepare('SELECT id, username, avatar_url FROM users WHERE google_id = ? LIMIT 1');
     $q->execute([$googleId]);
     $user = $q->fetch(PDO::FETCH_ASSOC);
+
     if ($user) {
-    $_SESSION['user_id']  = (int)$user['id'];
-    $_SESSION['username'] = $user['username'];
+        $userId   = (int)$user['id'];
+        $username = $user['username'];
 
-    // ✅ Sesión: avatar desde Google (si vino)
-    $_SESSION['avatar_url'] = $picture ?: null;
+        // Prioridad: avatar local > foto de Google > null
+        $avatarDb     = $user['avatar_url'] ?: null;
+        $avatarToShow = $avatarDb;
 
-    // (opcional) Persistir en BD si no había avatar
-    if ($picture) {
-        $up = $pdo->prepare('UPDATE users SET avatar_url = COALESCE(avatar_url, ?) WHERE id = ?');
-        $up->execute([$picture, $_SESSION['user_id']]);
+        // Si NO tiene avatar en BD, pero Google trae foto, la guardamos una vez
+        if (!$avatarToShow && $picture) {
+            $avatarToShow = $picture;
+            $up = $pdo->prepare('UPDATE users SET avatar_url = ? WHERE id = ?');
+            $up->execute([$picture, $userId]);
+        }
+
+        // Sesión
+        $_SESSION['user_id']     = $userId;
+        $_SESSION['username']    = $username;
+        $_SESSION['avatar_url']  = $avatarToShow; // O null → frontend usa el default
+
+        $pdo->commit();
+        return closePopupToIndex();
     }
 
-    $pdo->commit();
-    return closePopupToIndex();
-}
-
-
-    // 2) Buscar por email (enlazar)
-    $q = $pdo->prepare('SELECT id, username FROM users WHERE email = ? LIMIT 1');
+    // ======================================================
+    // 2) Buscar por email (enlazar cuenta existente)
+    // ======================================================
+    $q = $pdo->prepare('SELECT id, username, avatar_url FROM users WHERE email = ? LIMIT 1');
     $q->execute([$email]);
     $byEmail = $q->fetch(PDO::FETCH_ASSOC);
-    if ($byEmail) {
-    $u = $pdo->prepare('UPDATE users SET google_id = ? WHERE id = ?');
-    $u->execute([$googleId, $byEmail['id']]);
 
-    // (opcional) Persistir avatar si llega desde Google y no había uno
-    if ($picture) {
-        $up = $pdo->prepare('UPDATE users SET avatar_url = COALESCE(avatar_url, ?) WHERE id = ?');
-        $up->execute([$picture, $byEmail['id']]);
+    if ($byEmail) {
+        $userId   = (int)$byEmail['id'];
+        $username = $byEmail['username'];
+
+        // Enlazar google_id
+        $u = $pdo->prepare('UPDATE users SET google_id = ? WHERE id = ?');
+        $u->execute([$googleId, $userId]);
+
+        // Prioridad: avatar local > foto de Google > null
+        $avatarDb     = $byEmail['avatar_url'] ?: null;
+        $avatarToShow = $avatarDb;
+
+        if (!$avatarToShow && $picture) {
+            $avatarToShow = $picture;
+            $up = $pdo->prepare('UPDATE users SET avatar_url = ? WHERE id = ?');
+            $up->execute([$picture, $userId]);
+        }
+
+        $_SESSION['user_id']     = $userId;
+        $_SESSION['username']    = $username;
+        $_SESSION['avatar_url']  = $avatarToShow;
+
+        $pdo->commit();
+        return closePopupToIndex();
     }
 
-    $_SESSION['user_id']  = (int)$byEmail['id'];
-    $_SESSION['username'] = $byEmail['username'];
-    // ✅ Sesión: avatar
-    $_SESSION['avatar_url'] = $picture ?: null;
+    // ======================================================
+    // 3) Crear usuario nuevo (password = NULL)
+    // ======================================================
+    $username = generarUsername($pdo, $name ?: explode('@', $email)[0]);
+
+    $i = $pdo->prepare('INSERT INTO users (username, email, password, google_id) VALUES (?, ?, NULL, ?)');
+    $i->execute([$username, $email, $googleId]);
+    $userId = (int)$pdo->lastInsertId();
+
+    // Para usuario nuevo, si Google trae foto, la usamos como avatar inicial
+    $avatarToShow = null;
+    if ($picture) {
+        $avatarToShow = $picture;
+        $up = $pdo->prepare('UPDATE users SET avatar_url = ? WHERE id = ?');
+        $up->execute([$picture, $userId]);
+    }
+
+    $_SESSION['user_id']     = $userId;
+    $_SESSION['username']    = $username;
+    $_SESSION['avatar_url']  = $avatarToShow;
 
     $pdo->commit();
     return closePopupToIndex();
-}
-
-
-    // 3) Crear usuario nuevo (password = NULL)
-    $username = generarUsername($pdo, $name ?: explode('@', $email)[0]);
-$i = $pdo->prepare('INSERT INTO users (username, email, password, google_id) VALUES (?, ?, NULL, ?)');
-$i->execute([$username, $email, $googleId]);
-
-$_SESSION['user_id']  = (int)$pdo->lastInsertId();
-$_SESSION['username'] = $username;
-
-// ✅ Sesión: avatar desde Google (si vino)
-$_SESSION['avatar_url'] = $picture ?: null;
-
-// (opcional) Persistir en BD si tenemos foto
-if ($picture) {
-    $up = $pdo->prepare('UPDATE users SET avatar_url = ? WHERE id = ?');
-    $up->execute([$picture, $_SESSION['user_id']]);
-}
-
-$pdo->commit();
-return closePopupToIndex();
-
 
 } catch (Throwable $e) {
     $msg = htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
