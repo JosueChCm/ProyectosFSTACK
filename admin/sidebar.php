@@ -1,9 +1,52 @@
 <?php if (!defined('APP_INIT')) { http_response_code(403); exit; } ?>
+
+<?php
+// Avatar por defecto
+$DEFAULT_AVATAR = '../uploads/avatars/default.webp';
+
+// 1) Avatar en sesión
+$currentAvatar = $_SESSION['avatar_url'] ?? null;
+
+// 2) Intentar buscarlo una vez en BD si no existe en sesión
+if (!$currentAvatar && !empty($_SESSION['user_id'])) {
+    if (isset($pdo)) {
+        $stmt = $pdo->prepare('SELECT avatar_url FROM users WHERE id = ? LIMIT 1');
+        $stmt->execute([$_SESSION['user_id']]);
+        $dbAvatar = $stmt->fetchColumn();
+        if ($dbAvatar) {
+            $currentAvatar = $dbAvatar;
+            $_SESSION['avatar_url'] = $dbAvatar;
+        }
+    }
+}
+
+// 3) Escoger avatar final
+$avatarToShow = $currentAvatar ?: $DEFAULT_AVATAR;
+
+// Sanitizar nombre
+if (!function_exists('e')) {
+    function e($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+}
+
+$usernameToShow = e($_SESSION['username'] ?? 'usuario');
+?>
 <aside class="sidebar" id="sidebar" aria-label="Menú lateral">
   <div class="sidebar-title">
     <i class="fa-solid fa-bars-staggered"></i><span>Menú</span>
   </div>
 
+ <!-- BLOQUE DE PERFIL -->
+  <div class="sb-profile">
+    <img src="<?= e($avatarToShow) ?>"
+         alt="Avatar"
+         class="sb-avatar">
+
+    <div class="sb-name">
+      <?= $usernameToShow ?>
+    </div>
+  </div>
+
+<div class="sb-nav">
   <nav class="menu">
     <a class="menu-item <?= ($module==='home' && $action==='index') ? 'active' : '' ?>" href="./?m=home&action=index">
       <i class="fa-solid fa-house"></i><span>Presentación</span>
@@ -81,7 +124,7 @@
       <i class="fa-solid fa-list-check"></i><span>Punto 4</span>
     </a>
   </nav>
-
+</div>
   <footer class="sidebar-footer">
     <small>© <span id="year"></span> Mi Portafolio</small>
   </footer>

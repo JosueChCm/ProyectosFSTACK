@@ -44,8 +44,8 @@
 
   /* Aliases útiles */
   --sidebar-width: var(--sidebar-w);
-  --topbar-z: 1200;
-  --sidebar-z: 1300; /* ← sidebar siempre por encima de la topbar */
+  --topbar-z: 1300;    /* topbar por encima de la sidebar */
+  --sidebar-z: 1200;
   --radius-lg: var(--radius, 16px);
   --elev-1: var(--shadow, 0 10px 25px rgba(20,20,40,.06));
 }
@@ -100,7 +100,7 @@ body {
 
 /* =============================================================
    3) TOPBAR
-   - Sticky bajo el viewport; la sidebar irá por encima (z-index mayor).
+   - Sticky bajo el viewport.
    ============================================================= */
 .topbar {
   position: sticky; top: 0; z-index: var(--topbar-z);
@@ -152,10 +152,16 @@ body {
 
 /* =============================================================
    4) LAYOUT GENERAL
-   - Empuje del contenido controlado por media queries (ver sección 10).
+   - Sidebar a la izquierda, contenido a la derecha (desktop).
    ============================================================= */
-.layout { display: flex; min-height: calc(100vh - var(--topbar-h));  }
-.content { flex: 1; padding: 26px clamp(16px, 3vw, 36px); }
+.layout {
+  display: flex;
+  min-height: calc(100vh - var(--topbar-h));
+}
+.content {
+  flex: 1;
+  padding: 26px clamp(16px, 3vw, 36px);
+}
 
 h2 { margin: 4px 0 10px; font-size: clamp(20px, 2.4vw, 28px); }
 hr {
@@ -165,25 +171,33 @@ hr {
 }
 
 /* =============================================================
-   5) SIDEBAR (ESTÉTICA BASE)
-   - Esta clase mantiene tu look. La posición final la fuerza .app-sidebar.
+   5) SIDEBAR (ESTÉTICA + COMPORTAMIENTO DESKTOP)
    ============================================================= */
 .sidebar {
   width: var(--sidebar-w);
   background: var(--sidebar-bg);
   color: var(--sidebar-fg);
   padding: 18px 14px;
+
+  /* En escritorio: columna normal en el flex, no tapa la topbar ni el contenido */
   position: sticky;
   top: var(--topbar-h);
   min-height: calc(100vh - var(--topbar-h));
   box-shadow: var(--shadow);
   transition: left .2s ease;
   z-index: var(--sidebar-z);
-  align-self: flex-start;
+
+  display: flex;
+  flex-direction: column;
 }
 
 /* Título / menús */
-.sidebar-title { display: flex; align-items: center; gap: 10px; margin: 4px 8px 18px; font-weight: 800; text-transform: uppercase; color: var(--sidebar-fg-muted); }
+.sidebar-title {
+  display: flex; align-items: center; gap: 10px;
+  margin: 4px 8px 18px;
+  font-weight: 800; text-transform: uppercase;
+  color: var(--sidebar-fg-muted);
+}
 .menu { display: flex; flex-direction: column; gap: 6px; }
 
 /* Items */
@@ -195,20 +209,26 @@ hr {
 .menu-item i { width: 20px; text-align: center; color: var(--sidebar-fg-muted); }
 
 /* Toggle de submenú */
-.menu-toggle { background: transparent; border: 0; color: var(--sidebar-fg); cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; }
+.menu-toggle {
+  background: transparent; border: 0; color: var(--sidebar-fg);
+  cursor: pointer; display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 12px;
+}
 .menu-toggle .chevron { transition: transform .18s ease; color: var(--sidebar-fg-muted); }
 .menu-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
 
 /* Submenú (transición suave con max-height) */
 .submenu {
-  overflow: hidden; 
-  max-height: 0; 
-  transition: max-height .22s ease; 
-  padding-left: 8px; 
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height .22s ease;
+  padding-left: 8px;
 }
 .submenu.open { max-height: 1000px; }
 .submenu[hidden] { display: block; } /* permite animar */
-.submenu .menu-item { padding: 10px 14px 12px 32px; font-weight: 600; opacity: .95; }
+.submenu .menu-item {
+  padding: 10px 14px 12px 32px; font-weight: 600; opacity: .95;
+}
 
 /* Efecto subrayado */
 .menu-item::after {
@@ -290,19 +310,24 @@ hr {
   .topbar { justify-content: space-between; padding: 10px 16px; }
   .hamburger { display: inline-grid; place-items: center; }
 
-  /* Sidebar en móvil: oculta fuera de la pantalla y aparece con .open */
+  /* Layout pasa a stack vertical; sidebar se vuelve off-canvas */
+  .layout{
+    display: block;
+    min-height: auto;
+  }
+
   .sidebar {
     position: fixed;
     top: var(--topbar-h);
     left: -100%;
-    min-height: calc(100vh - var(--topbar-h));
+    height: calc(100vh - var(--topbar-h));
+    min-height: initial;
     width: var(--sidebar-w);
     background: var(--sidebar-bg);
     transition: left .25s ease;
     z-index: var(--sidebar-z);
     box-shadow: var(--shadow);
   }
-
   .sidebar.open { left: 0; }
 
   .content { padding: 18px 14px; }
@@ -467,13 +492,16 @@ select.ct-input option { color: #111827; background: #ffffff; }
 :root[data-theme="dark"] select.ct-input option { color: #e5e7eb; background: #111827; }
 
 /* =============================================================
-   18) SIDEBAR FIJA + PERFIL + LOGOUT (OVERRIDES CRÍTICOS)
-   - Aquí forzamos: sidebar fixed, grid rows y botón de logout abajo.
-   - Usar en <aside id="sidebar" class="sidebar app-sidebar">.
+   18) SIDEBAR: PERFIL + NAV + FOOTER
+   - Estilos de avatar, nombre y scroll interno del menú
    ============================================================= */
 
-/* Área scroll (solo el cuerpo del menú) */
-.sb-nav{ overflow-y: auto; padding: 10px; }
+/* Área de navegación dentro de la sidebar */
+.sb-nav{
+  flex: 1;
+  overflow-y: visible;
+  padding: 10px 0 0;
+}
 
 /* Perfil (avatar + nombre) */
 .sb-profile{
@@ -482,7 +510,10 @@ select.ct-input option { color: #111827; background: #ffffff; }
   border-bottom: 1px solid rgba(255,255,255,.07);
 }
 .sb-avatar{
-  width: 92px; height: 92px; border-radius: 999px; object-fit: cover;
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  object-fit: cover;
   border: 2px solid rgba(255,255,255,.18);
   box-shadow: 0 6px 18px rgba(0,0,0,.35);
 }
@@ -490,34 +521,27 @@ select.ct-input option { color: #111827; background: #ffffff; }
   margin-top: 10px; text-align: center;
   font-weight: 900; font-size: 1.12rem; color: #fff;
 }
-:root:not([data-theme="dark"]) .sb-name{ color:#0f172a; }
+:root:not([data-theme="dark"]) .sb-name{ color:#047b71; }
 
-/* Footer fijo (botón cerrar sesión) */
+/* Footer de la sidebar (texto y/o botón logout) */
 .sidebar-footer{
-  padding: 12px; border-top: 1px solid rgba(255,255,255,.07);
+  padding: 12px;
+  border-top: 1px solid rgba(255,255,255,.07);
+  margin-top: auto;
 }
 .sb-logout{
   display: inline-flex; width: 100%;
   align-items: center; justify-content: center; gap: .6rem;
   padding: 11px 14px; border-radius: 12px; text-decoration: none;
   font-weight: 900; color: #fff;
-  background: #dc2626;                   /* rojo base */
+  background: #dc2626;
   box-shadow: 0 10px 22px rgba(220,38,38,.25);
   transition: background-color .15s, filter .15s, transform .15s;
 }
 .sb-logout:hover{ background:#ef4444; filter:brightness(1.05); transform: translateY(-1px); }
 
-/* Sidebar móvil (deslizante) */
-@media (max-width: 1023px){
-  .sidebar.app-sidebar{ transform: translateX(-100%); transition: transform .25s ease; }
-  .sidebar.app-sidebar.open{ transform: translateX(0); }
-  .content{ margin-left: 0 !important; }
-}
-
 /* =============================================================
    19) USERBOX (perfil en la topbar) — DISEÑO COMPLETO
-   - Botón compacto + popover con tarjeta y acciones
-   - Usa variables del tema para mantener la estética
    ============================================================= */
 .userbox{ position: relative; }
 
@@ -540,7 +564,7 @@ select.ct-input option { color: #111827; background: #ffffff; }
 
 /* Contenedor del popover (se inyecta desde <template>) */
 #userboxPopover{
-  position: fixed; /* se ubicará por JS */
+  position: fixed;
   z-index: 9999;
   background: var(--card, #121a2a);
   color: var(--text, #e5e7eb);
@@ -549,7 +573,7 @@ select.ct-input option { color: #111827; background: #ffffff; }
   box-shadow: 0 22px 60px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.18);
   min-width: 280px; max-width: min(92vw, 340px);
   overflow: hidden;
-  display: none; /* visible al abrir por JS */
+  display: none;
 }
 
 /* Tarjeta interna */
