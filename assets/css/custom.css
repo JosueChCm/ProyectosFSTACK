@@ -44,7 +44,7 @@
 
   /* Aliases útiles */
   --sidebar-width: var(--sidebar-w);
-  --topbar-z: 1300;    /* topbar por encima de la sidebar */
+  --topbar-z: 1300;   /* topbar por encima de sidebar */
   --sidebar-z: 1200;
   --radius-lg: var(--radius, 16px);
   --elev-1: var(--shadow, 0 10px 25px rgba(20,20,40,.06));
@@ -100,7 +100,6 @@ body {
 
 /* =============================================================
    3) TOPBAR
-   - Sticky bajo el viewport.
    ============================================================= */
 .topbar {
   position: sticky; top: 0; z-index: var(--topbar-z);
@@ -156,10 +155,11 @@ body {
    ============================================================= */
 .layout {
   display: flex;
+  align-items: stretch;                 /* sidebar y contenido misma altura */
   min-height: calc(100vh - var(--topbar-h));
 }
 .content {
-  flex: 1;
+  flex: 1 1 auto;
   padding: 26px clamp(16px, 3vw, 36px);
 }
 
@@ -171,7 +171,7 @@ hr {
 }
 
 /* =============================================================
-   5) SIDEBAR (ESTÉTICA + COMPORTAMIENTO DESKTOP)
+   5) SIDEBAR (DESKTOP: COLUMNA NORMAL)
    ============================================================= */
 .sidebar {
   width: var(--sidebar-w);
@@ -179,10 +179,12 @@ hr {
   color: var(--sidebar-fg);
   padding: 18px 14px;
 
-  /* En escritorio: columna normal en el flex, no tapa la topbar ni el contenido */
-  position: sticky;
-  top: var(--topbar-h);
-  min-height: calc(100vh - var(--topbar-h));
+  /* Importante: NO sticky, NO fixed → no se superpone */
+  position: relative;
+  top: 0;
+  flex: 0 0 var(--sidebar-w);
+  height: auto;
+
   box-shadow: var(--shadow);
   transition: left .2s ease;
   z-index: var(--sidebar-z);
@@ -310,19 +312,20 @@ hr {
   .topbar { justify-content: space-between; padding: 10px 16px; }
   .hamburger { display: inline-grid; place-items: center; }
 
-  /* Layout pasa a stack vertical; sidebar se vuelve off-canvas */
+  /* Layout apilado; el contenido ocupa todo el ancho */
   .layout{
     display: block;
     min-height: auto;
   }
 
+  /* Sidebar en móvil: off-canvas controlada por .open (JS) */
   .sidebar {
     position: fixed;
     top: var(--topbar-h);
     left: -100%;
     height: calc(100vh - var(--topbar-h));
-    min-height: initial;
     width: var(--sidebar-w);
+    min-height: initial;
     background: var(--sidebar-bg);
     transition: left .25s ease;
     z-index: var(--sidebar-z);
@@ -493,7 +496,6 @@ select.ct-input option { color: #111827; background: #ffffff; }
 
 /* =============================================================
    18) SIDEBAR: PERFIL + NAV + FOOTER
-   - Estilos de avatar, nombre y scroll interno del menú
    ============================================================= */
 
 /* Área de navegación dentro de la sidebar */
@@ -523,7 +525,7 @@ select.ct-input option { color: #111827; background: #ffffff; }
 }
 :root:not([data-theme="dark"]) .sb-name{ color:#047b71; }
 
-/* Footer de la sidebar (texto y/o botón logout) */
+/* Footer de la sidebar */
 .sidebar-footer{
   padding: 12px;
   border-top: 1px solid rgba(255,255,255,.07);
@@ -541,11 +543,10 @@ select.ct-input option { color: #111827; background: #ffffff; }
 .sb-logout:hover{ background:#ef4444; filter:brightness(1.05); transform: translateY(-1px); }
 
 /* =============================================================
-   19) USERBOX (perfil en la topbar) — DISEÑO COMPLETO
+   19) USERBOX (perfil en la topbar)
    ============================================================= */
 .userbox{ position: relative; }
 
-/* Botón que abre el popover */
 .userbox-trigger{
   display: inline-flex; align-items: center; gap: .55rem;
   padding: 8px 12px;
@@ -562,7 +563,7 @@ select.ct-input option { color: #111827; background: #ffffff; }
 .userbox-trigger .chevron{ transition: transform .18s ease; opacity: .85; }
 .userbox-trigger[aria-expanded="true"] .chevron{ transform: rotate(180deg); }
 
-/* Contenedor del popover (se inyecta desde <template>) */
+/* Popover */
 #userboxPopover{
   position: fixed;
   z-index: 9999;
@@ -575,11 +576,7 @@ select.ct-input option { color: #111827; background: #ffffff; }
   overflow: hidden;
   display: none;
 }
-
-/* Tarjeta interna */
 .userbox-card{ display: grid; grid-template-rows: auto 1fr auto; }
-
-/* Cabecera: avatar + nombre */
 .userbox-header{
   display: grid; grid-template-columns: 64px 1fr; gap: 12px;
   align-items: center;
@@ -595,11 +592,7 @@ select.ct-input option { color: #111827; background: #ffffff; }
   font-weight: 900; letter-spacing: .2px; margin-bottom: 2px;
   color: var(--topbar-fg-strong, #0099ff);
 }
-
-/* Cuerpo opcional (enlaces extra) */
 .userbox-body{ padding: 8px 14px; }
-
-/* Acciones */
 .userbox-actions{
   padding: 12px 14px; display: grid; gap: 8px;
   border-top: 1px solid rgba(255,255,255,.08);
@@ -613,8 +606,6 @@ select.ct-input option { color: #111827; background: #ffffff; }
   transition: filter .15s ease, transform .15s ease, background-color .15s ease;
 }
 .userbox-btn:hover{ filter: brightness(1.05); transform: translateY(-1px); }
-
-/* Variantes */
 .userbox-btn--ghost{
   background: transparent; color: var(--topbar-fg);
   border: 1px solid color-mix(in srgb, var(--topbar-fg) 60%, transparent);
@@ -626,7 +617,6 @@ select.ct-input option { color: #111827; background: #ffffff; }
 }
 .userbox-btn--danger:hover{ background: #ef4444; }
 
-/* Modo claro: afina contraste del popover */
 :root:not([data-theme="dark"]) #userboxPopover{
   background: var(--card, #fff); color: var(--text, #0f172a);
   border-color: rgba(0,0,0,.06);
@@ -635,12 +625,10 @@ select.ct-input option { color: #111827; background: #ffffff; }
   color: var(--topbar-fg-strong, #05739e);
 }
 
-/* Foco accesible */
 .userbox-trigger:focus-visible{
   outline: none;
   box-shadow: 0 0 0 3px var(--ring);
 }
-
 #userboxPopover.open{ display: block; }
 
 /* =============================================================
