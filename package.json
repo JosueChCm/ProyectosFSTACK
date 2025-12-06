@@ -1,0 +1,22 @@
+{
+  "name": "my-mongo-project",
+  "version": "1.0.0",
+  "description": "A project using MongoDB and Mongoose",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "dev:watch": "nodemon: --watch . --ext js,json --ignore node_modules/ -- ignore dist/ index.js",
+    "dev:debug": "nodemon: --watch . --ext js,json --inspect index.js",
+    "clear": "rm -rf node modules && npm install "
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.4"
+  }
+}
