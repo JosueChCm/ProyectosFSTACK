@@ -20,6 +20,7 @@ function clearTokens() {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("user");
+  localStorage.removeItem("sessionExpiresAt");
 }
 
 /* Mostrar / ocultar contraseña */
@@ -40,25 +41,8 @@ function parseJwt(token) {
   }
 }
 
-/* Detectar expiración del token y cerrar sesión automáticamente */
-function checkTokenExpiration() {
-  const token = getAccessToken();
-  if (!token) return;
+// 🚫 BORRADO: La función checkTokenExpiration
+// 🚫 BORRADO: El setInterval cada 5 segundos
+// 🚫 YA NO SE USA EXP DEL TOKEN PARA VALIDAR DESDE EL FRONT
 
-  const payload = parseJwt(token);
-  if (!payload) return;
-
-  const expiresAt = payload.exp; // ya viene en ms
-  const now = Date.now();
-
-  if (now >= expiresAt) {
-    alert("Tu sesión ha expirado.");
-    clearTokens();
-    window.location.href = "login.html";
-  }
-}
-
-/* Revisión de expiración cada 5 segundos */
-setInterval(checkTokenExpiration, 5000);
-
-/* 🚫  IMPORTANTE: Eliminar completamente la renovación automática */
+console.warn("API.JS CARGADO DESDE:", document.currentScript.src);
