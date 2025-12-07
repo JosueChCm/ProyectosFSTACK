@@ -1,0 +1,283 @@
+/* =============================== */
+/* RESET + GLOBALS */
+/* =============================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, Arial, sans-serif;
+}
+
+body:not(.bg-auth) {
+  background-color: #1e2a45;
+}
+/* Imagen de fondo personalizada en login/register/index */
+body.bg-auth {
+  background: url('../img/background.jpg') center/cover no-repeat fixed;
+  backdrop-filter: blur(3px);
+  color: #f3f4f6 !important;   /* Blanco suave */
+}
+body:not(.bg-auth) * {
+  color: #f3f4f6 !important;   /* Todos los elementos */
+}
+/* Centrado */
+.center {
+  text-align: center;
+}
+
+/* =============================== */
+/* AUTH FORMS */
+/* =============================== */
+
+.auth-container {
+  width: 90%;
+  max-width: 400px;
+  margin: 80px auto;
+  background: rgba(17, 24, 39, 0.88);
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0px 0px 35px rgba(0, 0, 0, 0.4);
+}
+
+.auth-container h1 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: white;
+  font-size: 2rem;
+}
+
+/* Inputs */
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  font-size: 0.9rem;
+  color: #e5e7eb;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 4px;
+  border: 1px solid #4b5563;
+  background: #111827;
+  border-radius: 8px;
+  color: white;
+}
+
+/* Show password icon positioned correctly */
+/* Wrapper SOLO para el input y el icono */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Input con espacio a la derecha */
+.password-wrapper input {
+  width: 100%;
+  padding-right: 45px;
+}
+
+/* Icono centrado perfectamente */
+.show-pass {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  color: #9ca3af;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* El label ya no se ve afectado */
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Centered links */
+.link {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.link a {
+  color: #60a5fa;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.link a:hover {
+  text-shadow: 0px 0px 6px rgb(96, 165, 250);
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 12px;
+  background: #3b82f6;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+button:hover {
+  background: #2563eb;
+}
+
+/* =============================== */
+/* DASHBOARD */
+/* =============================== */
+
+.dashboard {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  background: #1f2937;
+  padding: 24px;
+  border-right: 1px solid #374151;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  font-size: 1.3rem;
+  color: white;
+  margin-bottom: 20px;
+}
+
+/* Links de sidebar como texto, NO botones */
+.sidebar a {
+  display: block;
+  padding: 10px 4px; /* No fondo, no borde */
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: #d1d5db;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: 0.25s ease;
+  border-radius: 4px;
+}
+
+/* Hover elegante */
+.sidebar a:hover {
+  background: rgba(255,255,255,0.06); 
+  color: white;
+}
+
+/* Sección activa (línea lateral azul, no botón) */
+.sidebar a.active {
+  color: #60a5fa;
+  position: relative;
+}
+
+.sidebar a.active::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+/* Logout */
+.sidebar a.logout {
+  margin-top: auto;
+  color: #fca5a5;
+}
+
+.sidebar a.logout:hover {
+  background: rgba(239,68,68,0.25);
+  color: #fff;
+}
+
+/* TOPBAR */
+.topbar {
+  width: 100%;
+  padding: 16px 28px;
+  background: #1f2937;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.topbar-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #60a5fa;
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px;
+}
+
+/* TOKEN BOX ( FIXED WIDTH ) */
+.token-box {
+  max-width: 500px;
+  width: 100%;
+  padding: 10px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+/* PROFILE FORM */
+.profile-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 500px;
+}
+
+.profile-grid input {
+  width: 100%;
+}
+
+/* Update button centered */
+button.full {
+  max-width: 500px;
+  margin: 20px 0;
+}
+
+/* GRÁFICOS DE ALTERNATIVA (SIN CHART.JS) */
+.graph-box {
+  width: 100%;
+  max-width: 600px;
+  height: 250px;
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  position: relative;
+  padding: 10px;
+  color: white;
+}
+
+.bar {
+  position: absolute;
+  bottom: 0;
+  width: 50px;
+  background: #3b82f6;
+  border-radius: 6px 6px 0 0;
+}

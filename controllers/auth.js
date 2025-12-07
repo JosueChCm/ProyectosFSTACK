@@ -29,7 +29,7 @@ async function register(req, res) {
       email: emailLowerCase,
       password,
       role: "user",
-      active: false,
+      active: true,
     });
 
     // Encriptar contraseña
@@ -91,7 +91,14 @@ async function login(req, res) {
       msg: "Inicio de sesión exitoso",
       access: accessToken,
       refresh: refreshToken,
+      user: {
+          firstname: userStore.firstname,
+          lastname: userStore.lastname,
+          email: userStore.email,
+          id: userStore._id
+      }
     });
+
   } catch (error) {
     console.error("Error en login:", error);
     return res.status(500).json({ msg: "Error del servidor", error: error.message });

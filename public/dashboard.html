@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>Menú</h2>
+    <a href="#" onclick="showSection('perfil')">Mi Perfil</a>
+    <br><br>
+    <a href="#" onclick="logout()">Cerrar sesión</a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div style="width:100%;">
+    <div class="topbar">
+        <span class="welcome" id="usernameHeader">Bienvenido</span>
+        <span class="topbar-title">DASHBOARD TOKEN</span>
+    </div>
+
+
+    <div class="content">
+
+
+      <!-- PERFIL -->
+      <div id="perfil" class="section">
+  <h1>Mi Perfil</h1>
+  
+  <p>Email: <span id="userEmail"></span></p>
+  <p>Nombre: <span id="userName"></span></p>
+    <h3>Tiempo restante de sesión:</h3>
+<p id="sessionTimer" style="font-size: 1.2rem; font-weight: bold; color: #60a5fa;">
+  Calculando…
+</p>
+
+
+  <h3>Access Token</h3>
+  <div class="token-box" id="accessBox"></div>
+
+  <button class="full" onclick="refreshToken()">Refrescar token manual</button>
+
+  <h3>Editar datos</h3>
+  
+  <div class="profile-grid">
+    <input id="editFirstname" placeholder="Nuevo nombre">
+    <input id="editLastname" placeholder="Nuevo apellido">
+    <input id="editEmail" placeholder="Nuevo email">
+  </div>
+
+  <h3>Cambiar contraseña</h3>
+  <div class="profile-grid">
+    <input id="editPassword" placeholder="Nueva contraseña">
+  </div>
+
+  <button class="full" onclick="updateUser()">Actualizar usuario</button>
+
+  <p id="profileMsg"></p>
+</div>
+
+
+    </div>
+
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>
